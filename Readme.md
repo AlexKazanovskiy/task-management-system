@@ -6,4 +6,4 @@ http://localhost:8080/api/developer
 ```
 but after authorization that describes in SECURITY.md.
 
-Another requests you can find [here](https://github.com/olehto/ATMS/tree/features/Back-end/atms/src/main/java/com/atms/controller) 
+Another requests you can find [here](https://github.com/AlexKazanovskiy/task-management-system/tree/master/atms/src/main/java/com/atms/controller) 
