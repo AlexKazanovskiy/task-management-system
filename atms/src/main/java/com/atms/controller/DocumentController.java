@@ -44,11 +44,7 @@ public class DocumentController {
     }
 
     @RequestMapping(value = "/api/document/task/{taskId}", method = RequestMethod.GET)
-    public ResponseEntity<Set<Document>> getDocumentByTask(@PathVariable("taskId") String taskId) {
-        Task task = taskService.findOne(Integer.parseInt(taskId));
-        if (task == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Set<Document>> getDocumentByTask(@PathVariable("taskId") Task task) {
         Set<Document> documents = task.getDocuments();
         if (documents == null)
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -58,13 +54,10 @@ public class DocumentController {
 
     @RequestMapping(value = "/api/document/task/{taskId}", method = RequestMethod.POST)
     public ResponseEntity<Document> add(@RequestParam("file") MultipartFile file,
-                                        @PathVariable("taskId") String taskId) {
-        Task task;
-        if ((task = taskService.findOne(Integer.parseInt(taskId))) == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                                        @PathVariable("taskId") Task task) {
         String link;
         try {
-            link = storageService.store(taskId + "/documents", file);
+            link = storageService.store(task.getTaskId() + "/documents", file);
         } catch (StorageException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

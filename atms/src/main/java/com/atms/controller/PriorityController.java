@@ -18,8 +18,8 @@ import java.util.List;
 @RestController
 public class PriorityController {
 
-    private final PriorityService priorityService;
     private static ObjectMapper objectMapper = new ObjectMapper();
+    private final PriorityService priorityService;
 
     @Autowired
     public PriorityController(PriorityService priorityService) {
@@ -36,11 +36,7 @@ public class PriorityController {
     }
 
     @RequestMapping(value = "/api/priority/{priorityId}", method = RequestMethod.GET)
-    public ResponseEntity<Priority> get(@PathVariable("priorityId") String priorityId) {
-        Priority priority = priorityService.findOne(Integer.parseInt(priorityId));
-        if (priority == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Priority> get(@PathVariable("priorityId") Priority priority) {
         return new ResponseEntity<>(priority, HttpStatus.OK);
     }
 
@@ -60,16 +56,12 @@ public class PriorityController {
 
     @RequestMapping(value = "/api/priority/{priorityId}", method = RequestMethod.PUT)
     public ResponseEntity<Priority> update(@RequestBody String body,
-                                           @PathVariable("priorityId") String priorityId) {
+                                           @PathVariable("priorityId") Priority oldPriority) {
         Priority priority;
         try {
             priority = objectMapper.readValue(body, Priority.class);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Priority oldPriority = priorityService.findOne(Integer.parseInt(priorityId));
-        if (oldPriority == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         oldPriority.setPriorityValue(priority.getPriorityValue());
         oldPriority.setTasks(priority.getTasks());

@@ -18,8 +18,8 @@ import java.util.List;
 @RestController
 public class SprintController {
 
-    private final SprintService sprintService;
     private static ObjectMapper objectMapper = new ObjectMapper();
+    private final SprintService sprintService;
 
     @Autowired
     public SprintController(SprintService sprintService) {
@@ -36,11 +36,7 @@ public class SprintController {
     }
 
     @RequestMapping(value = "/api/sprint/{sprintId}", method = RequestMethod.GET)
-    public ResponseEntity<Sprint> get(@PathVariable("sprintId") String sprintId) {
-        Sprint sprint = sprintService.findOne(Integer.parseInt(sprintId));
-        if (sprint == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Sprint> get(@PathVariable("sprintId") Sprint sprint) {
         return new ResponseEntity<>(sprint, HttpStatus.OK);
     }
 
@@ -59,16 +55,12 @@ public class SprintController {
     }
 
     @RequestMapping(value = "/api/sprint{sprintId}", method = RequestMethod.PUT)
-    public ResponseEntity<Sprint> update(@RequestBody String body, @PathVariable("sprintId") String sprintId) {
+    public ResponseEntity<Sprint> update(@RequestBody String body, @PathVariable("sprintId") Sprint oldSprint) {
         Sprint sprint;
         try {
             sprint = objectMapper.readValue(body, Sprint.class);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Sprint oldSprint = sprintService.findOne(Integer.parseInt(sprintId));
-        if (oldSprint == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         oldSprint.setDateEnd(sprint.getDateEnd());
         oldSprint.setDateStart(sprint.getDateStart());

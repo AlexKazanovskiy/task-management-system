@@ -19,8 +19,8 @@ import java.util.List;
 @CrossOrigin
 public class TechnologyController {
 
-    private final TechnologyService technologyService;
     private static ObjectMapper objectMapper = new ObjectMapper();
+    private final TechnologyService technologyService;
 
     @Autowired
     public TechnologyController(TechnologyService technologyService) {
@@ -37,11 +37,7 @@ public class TechnologyController {
     }
 
     @RequestMapping(value = "/api/technology/{technologyId}", method = RequestMethod.GET)
-    public ResponseEntity<Technology> get(@PathVariable("technologyId") String technologyId) {
-        Technology technology = technologyService.findOne(Integer.parseInt(technologyId));
-        if (technology == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Technology> get(@PathVariable("technologyId") Technology technology) {
         return new ResponseEntity<>(technology, HttpStatus.OK);
     }
 
@@ -61,16 +57,12 @@ public class TechnologyController {
 
     @RequestMapping(value = "/api/technology/{technologyId}", method = RequestMethod.PUT)
     public ResponseEntity<Technology> update(@RequestBody String body,
-                                             @PathVariable("technologyId") String technologyId) {
+                                             @PathVariable("technologyId") Technology oldTechnology) {
         Technology technology;
         try {
             technology = objectMapper.readValue(body, Technology.class);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Technology oldTechnology = technologyService.findOne(Integer.parseInt(technologyId));
-        if (oldTechnology == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         oldTechnology.setDescription(technology.getDescription());
         oldTechnology.setTitle(technology.getTitle());

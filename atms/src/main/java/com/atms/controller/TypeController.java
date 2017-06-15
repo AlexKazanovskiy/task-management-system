@@ -18,8 +18,8 @@ import java.util.List;
 @RestController
 public class TypeController {
 
-    private final TypeService typeService;
     private static ObjectMapper objectMapper = new ObjectMapper();
+    private final TypeService typeService;
 
     @Autowired
     public TypeController(TypeService typeService) {
@@ -36,11 +36,7 @@ public class TypeController {
     }
 
     @RequestMapping(value = "/api/type/{typeId}", method = RequestMethod.GET)
-    public ResponseEntity<Type> get(@PathVariable("typeId") String typeId) {
-        Type type = typeService.findOne(Integer.parseInt(typeId));
-        if (type == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Type> get(@PathVariable("typeId") Type type) {
         return new ResponseEntity<>(type, HttpStatus.OK);
     }
 
@@ -60,16 +56,12 @@ public class TypeController {
 
     @RequestMapping(value = "/api/type/{typeId}", method = RequestMethod.PUT)
     public ResponseEntity<Type> update(@RequestBody String body,
-                                       @PathVariable("typeId") String typeId) {
+                                       @PathVariable("typeId") Type oldType) {
         Type type;
         try {
             type = objectMapper.readValue(body, Type.class);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Type oldType = typeService.findOne(Integer.parseInt(typeId));
-        if (oldType == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         oldType.setTypeValue(type.getTypeValue());
         oldType.setTasks(type.getTasks());

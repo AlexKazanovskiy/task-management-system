@@ -20,9 +20,9 @@ import java.util.List;
 @RestController
 public class ProjectController {
 
+    private static ObjectMapper objectMapper = new ObjectMapper();
     private final ProjectService projectService;
     private final DeveloperService developerService;
-    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public ProjectController(ProjectService projectService, DeveloperService developerService) {
@@ -31,11 +31,7 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "/api/project/{projectId}", method = RequestMethod.GET)
-    public ResponseEntity<Project> get(@PathVariable("projectId") String projectId) {
-        Project project = projectService.findOne(Integer.parseInt(projectId));
-        if (project == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Project> get(@PathVariable("projectId") Project project) {
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
@@ -49,11 +45,7 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "/api/project/developer/{developerId}", method = RequestMethod.GET)
-    public ResponseEntity<List<Project>> getByDeveloper(@PathVariable("developerId") String developerId) {
-        Developer developer = developerService.findOne(Integer.parseInt(developerId));
-        if (developer == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<List<Project>> getByDeveloper(@PathVariable("developerId") Developer developer) {
         List<Project> projects = projectService.findByDeveloper(developer);
         if (projects == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -76,16 +68,12 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "/api/project/{projectId}", method = RequestMethod.PUT)
-    public ResponseEntity<Project> update(@RequestBody String body, @PathVariable("projectId") String projectId) {
+    public ResponseEntity<Project> update(@RequestBody String body, @PathVariable("projectId") Project oldProject) {
         Project project;
         try {
             project = objectMapper.readValue(body, Project.class);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Project oldProject = projectService.findOne(Integer.parseInt(projectId));
-        if (oldProject == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         oldProject.setDescription(project.getDescription());
         oldProject.setDeadline(project.getDeadline());

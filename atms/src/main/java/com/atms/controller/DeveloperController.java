@@ -2,6 +2,7 @@ package com.atms.controller;
 
 import com.atms.model.Developer;
 import com.atms.model.PasswordResetToken;
+import com.atms.model.Project;
 import com.atms.notify.Notifier;
 import com.atms.service.DeveloperService;
 import com.atms.service.ProjectService;
@@ -24,10 +25,10 @@ import java.util.UUID;
 @RestController
 public class DeveloperController {
 
+    private static ObjectMapper objectMapper = new ObjectMapper();
     private final DeveloperService developerService;
     private final ProjectService projectService;
     private final Notifier notifier;
-    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public DeveloperController(DeveloperService developerService, ProjectService projectService, Notifier notifier) {
@@ -46,8 +47,8 @@ public class DeveloperController {
     }
 
     @RequestMapping(value = "/api/developer/project/{projectId}", method = RequestMethod.GET)
-    public ResponseEntity<List<Developer>> getByProject(@PathVariable("projectId") String projectId) {
-        List<Developer> developers = developerService.findByProject(projectService.findOne(Integer.parseInt(projectId)));
+    public ResponseEntity<List<Developer>> getByProject(@PathVariable("projectId") Project project) {
+        List<Developer> developers = developerService.findByProject(project);
         if (developers == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -55,11 +56,7 @@ public class DeveloperController {
     }
 
     @RequestMapping(value = "/api/developer/{developerId}", method = RequestMethod.GET)
-    public ResponseEntity<Developer> getDeveloper(@PathVariable("developerId") String developerId) {
-        Developer developer = developerService.findOne(Integer.parseInt(developerId));
-        if (developer == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Developer> getDeveloper(@PathVariable("developerId") Developer developer) {
         return new ResponseEntity<>(developer, HttpStatus.OK);
     }
 
@@ -79,10 +76,7 @@ public class DeveloperController {
     }
 
     @RequestMapping(value = "/api/developer/{developerId}", method = RequestMethod.PUT)
-    public ResponseEntity<Developer> update(@PathVariable("developerId") String developerId, @RequestBody String body) {
-        Developer oldDeveloper = developerService.findOne(Integer.parseInt(developerId));
-        if (oldDeveloper == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Developer> update(@PathVariable("developerId") Developer oldDeveloper, @RequestBody String body) {
         Developer developer = null;
         try {
             developer = objectMapper.readValue(body, Developer.class);

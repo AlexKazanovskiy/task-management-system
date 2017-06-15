@@ -38,12 +38,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task update(Integer id, Task task) {
-        Task oldTask = taskRepository.findOne(id);
-        if (oldTask == null) {
-            return null;
-        }
-
+    public Task update(Task oldTask, Task task) {
         if (!oldTask.getStatus().equals(task.getStatus()))
             notifier.notifyCustomer(task);
 

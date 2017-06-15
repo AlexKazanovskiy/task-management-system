@@ -46,11 +46,8 @@ public class LogController {
     @RequestMapping(value = "/api/log/task/{taskId}", method = RequestMethod.POST)
     public ResponseEntity<Log> add(@RequestParam("file") MultipartFile file,
                                    @RequestParam("applications") String applications,
-                                   @PathVariable("taskId") Integer taskId) {
+                                   @PathVariable("taskId") Task task) {
         Log log = new Log();
-        Task task = taskService.findOne(taskId);
-        if (task == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         String link;
         try {
             link = storageService.store(String.valueOf(task.getTaskId()) + "/log", file);

@@ -18,8 +18,8 @@ import java.util.List;
 @RestController
 public class RequirementController {
 
-    private final RequirementService requirementService;
     private static ObjectMapper objectMapper = new ObjectMapper();
+    private final RequirementService requirementService;
 
     @Autowired
     public RequirementController(RequirementService requirementService) {
@@ -36,11 +36,7 @@ public class RequirementController {
     }
 
     @RequestMapping(value = "/api/requirement/{requirementId}", method = RequestMethod.GET)
-    public ResponseEntity<Requirement> get(@PathVariable("requirementId") String requirementId) {
-        Requirement requirement = requirementService.findOne(Integer.parseInt(requirementId));
-        if (requirement == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Requirement> get(@PathVariable("requirementId") Requirement requirement) {
         return new ResponseEntity<>(requirement, HttpStatus.OK);
     }
 
@@ -60,16 +56,12 @@ public class RequirementController {
 
     @RequestMapping(value = "/api/requirement/{requirementId}", method = RequestMethod.PUT)
     public ResponseEntity<Requirement> update(@RequestBody String body,
-                                              @PathVariable("requirementId") String requirementId) {
+                                              @PathVariable("requirementId") Requirement oldRequirement) {
         Requirement requirement;
         try {
             requirement = objectMapper.readValue(body, Requirement.class);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Requirement oldRequirement = requirementService.findOne(Integer.parseInt(requirementId));
-        if (oldRequirement == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         oldRequirement.setDescription(requirement.getDescription());
         oldRequirement.setTasks(requirement.getTasks());

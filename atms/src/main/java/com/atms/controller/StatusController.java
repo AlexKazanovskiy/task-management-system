@@ -19,8 +19,8 @@ import java.util.List;
 
 public class StatusController {
 
-    private final StatusService statusService;
     private static ObjectMapper objectMapper = new ObjectMapper();
+    private final StatusService statusService;
 
     @Autowired
     public StatusController(StatusService statusService) {
@@ -37,11 +37,7 @@ public class StatusController {
     }
 
     @RequestMapping(value = "/api/status/{statusId}", method = RequestMethod.GET)
-    public ResponseEntity<Status> get(@PathVariable("statusId") String statusId) {
-        Status status = statusService.findOne(Integer.parseInt(statusId));
-        if (status == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Status> get(@PathVariable("statusId") Status status) {
         return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
@@ -61,16 +57,12 @@ public class StatusController {
 
     @RequestMapping(value = "/api/status/{statusId}", method = RequestMethod.PUT)
     public ResponseEntity<Status> update(@RequestBody String body,
-                                         @PathVariable("statusId") String statusId) {
+                                         @PathVariable("statusId") Status oldStatus) {
         Status status;
         try {
             status = objectMapper.readValue(body, Status.class);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Status oldStatus = statusService.findOne(Integer.parseInt(statusId));
-        if (oldStatus == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         oldStatus.setValue(status.getValue());
         oldStatus.setTasks(status.getTasks());

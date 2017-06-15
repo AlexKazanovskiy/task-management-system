@@ -17,8 +17,8 @@ import java.util.List;
 @RestController
 public class KeywordController {
 
-    private final KeywordService keywordService;
     private static ObjectMapper objectMapper = new ObjectMapper();
+    private final KeywordService keywordService;
 
     @Autowired
     public KeywordController(KeywordService keywordService) {
@@ -35,11 +35,7 @@ public class KeywordController {
     }
 
     @RequestMapping(value = "/api/keyword/{keywordId}", method = RequestMethod.GET)
-    public ResponseEntity<Keyword> get(@PathVariable("keywordId") String keywordId) {
-        Keyword keyword = keywordService.findOne(Integer.parseInt(keywordId));
-        if (keyword == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Keyword> get(@PathVariable("keywordId") Keyword keyword) {
         return new ResponseEntity<>(keyword, HttpStatus.OK);
     }
 
@@ -58,16 +54,12 @@ public class KeywordController {
     }
 
     @RequestMapping(value = "/api/keyword/{keywordId}", method = RequestMethod.PUT)
-    public ResponseEntity<Keyword> update(@RequestBody String body, @PathVariable("keywordId") String keywordId) {
+    public ResponseEntity<Keyword> update(@RequestBody String body, @PathVariable("keywordId") Keyword oldKeyword) {
         Keyword keyword;
         try {
             keyword = objectMapper.readValue(body, Keyword.class);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Keyword oldKeyword = keywordService.findOne(Integer.parseInt(keywordId));
-        if (oldKeyword == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         oldKeyword.setValue(keyword.getValue());
         return new ResponseEntity<>(keywordService.update(oldKeyword), HttpStatus.OK);

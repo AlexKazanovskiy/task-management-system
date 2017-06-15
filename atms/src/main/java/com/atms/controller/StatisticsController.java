@@ -33,8 +33,7 @@ public class StatisticsController {
     }
 
     @RequestMapping(value = "/api/statistics/{taskId}", method = RequestMethod.GET)
-    public ResponseEntity<Developer> getSuitableDeveloper(@PathVariable("taskId") String taskid) {
-        Task task = taskService.findOne(Integer.parseInt(taskid));
+    public ResponseEntity<Developer> getSuitableDeveloper(@PathVariable("taskId") Task task) {
         Developer developer = statisticsService.getSuitableDeveloper(task);
         return new ResponseEntity<>(developer, HttpStatus.OK);
     }
@@ -47,8 +46,7 @@ public class StatisticsController {
     }
 
     @RequestMapping(value = "/api/statistics/developers/{taskId}", method = RequestMethod.GET)
-    public ResponseEntity<Map<Developer, Double>> getDevelopersDeviation(@RequestParam("taskId") String taskId) {
-        Task task = taskService.findOne(Integer.parseInt(taskId));
+    public ResponseEntity<Map<Developer, Double>> getDevelopersDeviation(@PathVariable("taskId") Task task) {
         List<Developer> developers = developerService.findAll();
         Map<Developer, Double> developersDeviation = new HashMap<>();
         for (Developer developer : developers)
