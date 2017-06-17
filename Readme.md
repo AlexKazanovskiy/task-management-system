@@ -1,4 +1,4 @@
-# Cinema booking system
+# Task management system
 This is REST-api for task management system.
 ### Technologies 
 * Spring MVC 
